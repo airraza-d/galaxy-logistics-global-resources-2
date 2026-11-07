@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Book Your Ride - Top Galaxy Logistics</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#2b2b2b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --u:calc(100vw / 1235);
+  --card:#ffffff;
+  --label:#8a8a8a;
+  --text:#111111;
+  --divider:#d9d9d9;
+  --peach:#f2c4a0;
+  --peach-text:#1a1a1a;
+  --black:#111111;
+  --radius:calc(14*var(--u));
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:linear-gradient(180deg,#3a3a3a 0%,#262626 100%);font-family:"Outfit",sans-serif;-webkit-font-smoothing:antialiased;color:var(--text);min-height:100vh}
+button{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:pointer}
+.icon{display:block;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+
+.page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.book{width:calc(130*var(--u));min-width:140px;height:calc(70*var(--u));min-height:56px;border-radius:calc(10*var(--u));background:var(--peach);color:var(--peach-text);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(6*var(--u));font-size:calc(14*var(--u));font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,0.3);transition:transform .2s,filter .2s}
+.book:hover{filter:brightness(.95);transform:translateY(-2px)}
+.book .icon{width:calc(26*var(--u));min-width:22px;height:calc(26*var(--u));min-height:22px}
+.book:disabled{opacity:.7;cursor:not-allowed}
+
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(3px);display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:calc(30*var(--u));z-index:10}
+.overlay.open{display:flex}
+.card{position:relative;width:calc(1115*var(--u));max-width:100%;margin:auto;background:var(--card);border-radius:var(--radius);padding:calc(24*var(--u)) calc(14*var(--u)) calc(10*var(--u));box-shadow:0 calc(6*var(--u)) calc(24*var(--u)) rgba(0,0,0,.25)}
+.close{position:absolute;right:calc(16*var(--u));top:calc(14*var(--u));width:calc(34*var(--u));height:calc(34*var(--u));border-radius:50%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;color:var(--label);transition:background-color .2s}
+.close:hover{background:#e2e2e2;color:#111}
+.close .icon{width:calc(16*var(--u));height:calc(16*var(--u))}
+.head{padding:0 calc(18*var(--u)) calc(8*var(--u))}
+.head h1{margin:0;font-weight:600;font-size:calc(34*var(--u));line-height:1.1}
+.head p{margin:calc(6*var(--u)) 0 0;font-weight:300;font-size:calc(15*var(--u));color:var(--label)}
+
+.row{display:flex;align-items:stretch;padding:calc(14*var(--u)) 0;border-top:1px solid var(--divider)}
+.row:first-of-type{margin-top:calc(10*var(--u))}
+.cell{flex:1 1 0;min-width:0;padding:0 calc(22*var(--u));border-left:1px solid var(--divider);display:flex;flex-direction:column;justify-content:center}
+.cell:first-child{border-left:0;padding-left:calc(18*var(--u))}
+.cell label{font-size:calc(14*var(--u));font-weight:300;color:var(--label);margin-bottom:calc(5*var(--u))}
+.cell label i{font-style:normal}
+.cell input,.cell select{width:100%;height:calc(28*var(--u));border:0;outline:0;background:transparent;padding:0;font:400 calc(14*var(--u))/1 "Outfit",sans-serif;color:var(--text)}
+.cell input::placeholder{color:var(--text);opacity:.85}
+.cell select{appearance:none;-webkit-appearance:none;cursor:pointer;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a8a8a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right center;padding-right:16px}
+.cell select:disabled{cursor:not-allowed}
+.cell:focus-within label{color:var(--text)}
+
+.foot{display:flex;align-items:center;justify-content:space-between;padding:calc(14*var(--u)) calc(4*var(--u)) calc(8*var(--u)) calc(18*var(--u));border-top:1px solid var(--divider)}
+.total{display:flex;align-items:baseline;gap:calc(14*var(--u))}
+.total span{font-size:calc(14*var(--u));font-weight:300;color:var(--label)}
+.total b{font-size:calc(26*var(--u));font-weight:500}
+.actions{display:flex;align-items:center;gap:calc(14*var(--u))}
+.show{height:calc(54*var(--u));padding:0 calc(28*var(--u));border-radius:calc(10*var(--u));background:var(--black);color:#fff;font-size:calc(14*var(--u));font-weight:500;transition:background-color .2s}
+.show:hover{background:#2a2a2a}
+.overlay .book{width:auto;height:calc(54*var(--u));padding:0 calc(28*var(--u));border-radius:calc(10*var(--u));flex-direction:row}
+
+.success{display:none;flex-direction:column;align-items:center;text-align:center;padding:26px 16px 20px}
+.success.show-s{display:flex}
+.success .suc-state{width:100%;display:flex;flex-direction:column;align-items:center}
+.success .mail-illu{width:160px;height:auto;margin:0 auto 16px;display:block;overflow:visible}
+.success .error-illu{width:96px;height:96px;margin:0 auto 16px;display:block;overflow:visible}
+.success h3{margin:0 0 10px;font-size:24px;font-weight:700;font-family:"Outfit",sans-serif;color:#374151;letter-spacing:-.02em}
+.success h3.err-title{color:#dc2626;font-size:22px;margin:0 0 8px}
+.success p{margin:0 auto 18px;font-size:14px;font-weight:400;color:#6b7280;line-height:1.55;max-width:400px}
+.success p.err-desc{margin:0 auto 16px;font-size:13.5px}
+.success .support-options{width:100%;max-width:360px;display:flex;flex-direction:column;gap:10px;margin:4px auto 16px}
+.success .support-card{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:10px;background:#f9fafb;border:1px solid #e5e7eb;text-decoration:none;transition:all .2s ease}
+.success .support-card:hover{background:#ffffff;border-color:#fca5a5;transform:translateY(-1px);box-shadow:0 4px 14px rgba(220,38,38,0.12)}
+.success .support-card .card-left{display:flex;align-items:center;gap:12px;text-align:left}
+.success .support-card .card-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.success .support-card .wa-badge{background:#25d366;color:#ffffff}
+.success .support-card .mail-badge{background:#111827;color:#ffffff}
+.success .support-card .card-info{display:flex;flex-direction:column}
+.success .support-card .card-name{font-size:13px;font-weight:700;color:#111827;font-family:"Outfit",sans-serif}
+.success .support-card .card-val{font-size:12px;color:#6b7280;font-family:"Inter",sans-serif}
+.success .red-arrow-btn{width:34px;height:34px;border-radius:50%;background:#ef4444;color:#ffffff;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .2s ease,background-color .2s ease,box-shadow .2s ease;box-shadow:0 3px 10px rgba(239,68,68,0.35)}
+.success .support-card:hover .red-arrow-btn{background:#dc2626;transform:translateX(3px) scale(1.06);box-shadow:0 5px 14px rgba(239,68,68,0.45)}
+.success .book{width:100%;max-width:280px;height:46px;padding:0 24px;border-radius:8px;background:#000;color:#fff;font-size:14px;font-weight:600;font-family:"Outfit",sans-serif;display:inline-flex;align-items:center;justify-content:center;border:0;cursor:pointer;transition:transform .2s,background-color .2s,box-shadow .2s}
+.success .book:hover{background:#1f1f1f;transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,.25)}
+
+@media(max-width:768px){
+  :root{--u:1px;--radius:14px}
+  .overlay{padding:14px 10px}
+  .card{padding:20px 14px 14px}
+  .head h1{font-size:24px}
+  .head p{font-size:13px}
+  .row{flex-direction:column;gap:12px;padding:12px 0}
+  .cell{padding:0!important;border-left:0!important}
+  .cell input,.cell select{height:32px;font-size:14px}
+  .foot{flex-direction:column;align-items:stretch;gap:14px;padding:14px 4px 6px}
+  .total{justify-content:space-between}
+  .total b{font-size:22px}
+  .actions{display:flex;gap:10px}
+  .actions .show{flex:1;height:46px;font-size:14px}
+  .actions .book{flex:1.2;height:46px;font-size:14px}
+  .close{width:32px;height:32px}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="icon-cal-clock" viewBox="0 0 24 24"><path d="M20 11V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5"/><path d="M8 2v4M16 2v4M4 9h16"/><circle cx="17" cy="17" r="4.5"/><path d="M17 15v2.2l1.3.8"/></symbol>
+  <symbol id="icon-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="icon-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12.5l3 3 5-6"/></symbol>
+</svg>
+
+<div class="page">
+  <button class="book" id="openBtn" type="button"><svg class="icon"><use href="#icon-cal-clock"/></svg>Book Now</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="card">
+    <button class="close" id="closeBtn" type="button" aria-label="Close"><svg class="icon"><use href="#icon-x"/></svg></button>
+
+    <form id="bookForm">
+      <div class="head">
+        <h1>Book Your Ride</h1>
+        <p>Fill in the details below to estimate your price and book a vehicle.</p>
+      </div>
+
+      <div class="row">
+        <div class="cell"><label for="pickup_location">Pickup Location</label><input id="pickup_location" name="pickup_location" type="text" placeholder="Where we should pick you up" required></div>
+        <div class="cell"><label for="service_area">Destination / Service Area</label><select id="service_area" name="service_area" required><option value="" disabled selected>Select area</option></select></div>
+        <div class="cell"><label for="exact_destination_address">Exact Destination Address <i>(Optional)</i></label><input id="exact_destination_address" name="exact_destination_address" type="text" placeholder="Enter exact address (optional)"></div>
+      </div>
+
+      <div class="row">
+        <div class="cell"><label for="pickup_date">Pickup Date</label><input id="pickup_date" name="pickup_date" type="date" required></div>
+        <div class="cell"><label for="pickup_time">Pickup Time</label><input id="pickup_time" name="pickup_time" type="time" required></div>
+        <div class="cell"><label for="return_date">Return Date</label><input id="return_date" name="return_date" type="date" required></div>
+        <div class="cell"><label for="return_time">Return Time</label><input id="return_time" name="return_time" type="time" required></div>
+      </div>
+
+      <div class="row">
+        <div class="cell"><label for="selected_car">Select Car</label><select id="selected_car" name="selected_car" required><option value="" disabled selected>Select Car</option><option value="Sedan">Sedan</option><option value="Lexus">Lexus</option><option value="Prado/Hiace">Prado/Hiace</option><option value="LandCruiser/Coaster">LandCruiser/Coaster</option></select></div>
+        <div class="cell"><label for="passenger_count">Number of Passengers</label><select id="passenger_count" name="passenger_count" required><option value="" disabled selected>Passengers</option></select></div>
+        <div class="cell"><label for="client_type">Client Type</label><select id="client_type" name="client_type" required><option value="" disabled selected>Select client type</option><option value="Individual">Individual</option><option value="Corporate">Corporate</option><option value="Diplomatic / VIP">Diplomatic / VIP</option><option value="Government">Government</option></select></div>
+      </div>
+
+      <div class="row">
+        <div class="cell"><label for="full_name">Full Name</label><input id="full_name" name="full_name" type="text" placeholder="e.g. John Doe" required></div>
+        <div class="cell"><label for="phone_number">Phone Number</label><input id="phone_number" name="phone_number" type="tel" placeholder="e.g. +234 801 234 5678" required></div>
+        <div class="cell"><label for="email_address">Email Address</label><input id="email_address" name="email_address" type="email" placeholder="e.g. client@example.com" required></div>
+      </div>
+
+      <div class="foot">
+        <div class="total"><span>Estimated Total</span><b id="total">₦0</b></div>
+        <div class="actions">
+          <button type="button" class="show" id="showCarsBtn">Show cars</button>
+          <button class="book" id="submitBtn" type="submit"><svg class="icon"><use href="#icon-cal-clock"/></svg>Book Now</button>
+        </div>
+      </div>
+    </form>
+
+    <div class="success" id="success">
+      <!-- SUCCESS: Shown when delivered to the webhook -->
+      <div class="suc-state suc-success" id="sucSuccessState">
+        <svg class="mail-illu" viewBox="0 0 170 140" width="170" height="140" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <filter id="cardShadowBk" x="-15%" y="-10%" width="130%" height="130%" filterUnits="userSpaceOnUse">
+              <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.14" />
+            </filter>
+            <clipPath id="cardBorderClipBk">
+              <rect x="0" y="0" width="112" height="82" rx="7" />
+            </clipPath>
+          </defs>
+          <polygon points="20,62 85,16 150,62" fill="#22252a" stroke="#181a1f" stroke-width="1.2" stroke-linejoin="round" />
+          <polygon points="21,62 85,19 149,62" fill="#15171b" />
+          <rect x="20" y="62" width="130" height="72" rx="4" fill="#1a1c21" />
+          <g transform="translate(29, 24)" filter="url(#cardShadowBk)">
+            <rect x="0" y="0" width="112" height="82" rx="7" fill="#ffffff" />
+            <g clip-path="url(#cardBorderClipBk)">
+              <rect x="0" y="0" width="112" height="7" fill="#f8fafc" />
+              <path d="M-6,8 L4,-2 M9,8 L19,-2 M24,8 L34,-2 M39,8 L49,-2 M54,8 L64,-2 M69,8 L79,-2 M84,8 L94,-2 M99,8 L109,-2 M114,8 L124,-2" stroke="#ea5b5b" stroke-width="3" stroke-linecap="square" />
+              <path d="M1.5,8 L11.5,-2 M16.5,8 L26.5,-2 M31.5,8 L41.5,-2 M46.5,8 L56.5,-2 M61.5,8 L71.5,-2 M76.5,8 L86.5,-2 M91.5,8 L101.5,-2 M106.5,8 L116.5,-2" stroke="#60a5fa" stroke-width="3" stroke-linecap="square" />
+            </g>
+            <circle cx="30" cy="35" r="14" fill="#f1f5f9" />
+            <circle cx="30" cy="35" r="13.5" fill="none" stroke="#cbd5e1" stroke-width="1.2" />
+            <path d="M24 35.5 L28 39.5 L36.5 30.5" fill="none" stroke="#64748b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+            <rect x="52" y="27" width="46" height="4.5" rx="2.25" fill="#e2e8f0" />
+            <rect x="52" y="37" width="34" height="4.5" rx="2.25" fill="#e2e8f0" />
+            <rect x="16" y="56" width="80" height="3.5" rx="1.75" fill="#f1f5f9" />
+            <rect x="16" y="64" width="56" height="3.5" rx="1.75" fill="#f1f5f9" />
+          </g>
+          <polygon points="20,62 85,102 20,134" fill="#181a1f" />
+          <polygon points="150,62 85,102 150,134" fill="#181a1f" />
+          <polygon points="20,134 85,88 150,134" fill="#0f1013" stroke="#252830" stroke-width="0.8" stroke-linejoin="round" />
+          <path d="M20,62 L20,132 Q20,134 22,134 L148,134 Q150,134 150,132 L150,62" fill="none" stroke="#22252a" stroke-width="1.2" />
+        </svg>
+        <h3>Booking received!</h3>
+        <p>We sent your booking details to our team. Check your email for a confirmation, and check your spam folder if you do not hear from us after a while.</p>
+        <button class="book" id="againBtn" type="button">Book Another Ride</button>
+      </div>
+
+      <!-- FAILURE: Shown when webhook delivery fails -->
+      <div class="suc-state suc-failure" id="sucFailureState" style="display:none;">
+        <svg class="error-illu" viewBox="0 0 100 100" width="96" height="96" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="50" cy="50" r="46" fill="#fef2f2" stroke="#fecaca" stroke-width="2"/>
+          <circle cx="50" cy="50" r="34" fill="#ef4444"/>
+          <path d="M40 40L60 60M60 40L40 60" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h3 class="err-title">Not sent, please contact support</h3>
+        <p class="err-desc">We could not deliver your booking to our automated service. Please reach out directly to our support team via WhatsApp or Business Email:</p>
+        
+        <div class="support-options">
+          <a class="support-card wa-card waSupportLink" id="bookWaSupportLink" href="https://wa.me/2347016545203" target="_blank" rel="noopener">
+            <div class="card-left">
+              <span class="card-icon wa-badge">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm.01 1.67c4.54 0 8.24 3.7 8.24 8.24 0 2.2-.86 4.28-2.42 5.83a8.19 8.19 0 0 1-5.82 2.41c-1.45 0-2.88-.39-4.13-1.12l-.3-.18-3.07.81.82-2.99-.19-.31a8.18 8.18 0 0 1-1.25-4.45c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.66c-.25-.13-1.48-.73-1.71-.81-.23-.09-.4-.13-.57.13-.17.25-.66.81-.81.98-.15.17-.3.19-.55.06-.25-.13-1.06-.39-2.02-1.25-.75-.67-1.25-1.49-1.4-1.74-.15-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.15.17-.25.25-.42.08-.17.04-.32-.02-.45-.06-.13-.57-1.37-.78-1.88-.2-.49-.41-.43-.57-.43h-.49c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1s.9 2.44 1.02 2.6c.13.17 1.77 2.7 4.29 3.78.6.26 1.07.41 1.44.53.61.19 1.16.17 1.6.1.49-.07 1.48-.61 1.69-1.19.21-.59.21-1.09.15-1.19-.07-.11-.23-.17-.48-.29z"/></svg>
+              </span>
+              <div class="card-info">
+                <span class="card-name">WhatsApp Support</span>
+                <span class="card-val">+234 701 654 5203</span>
+              </div>
+            </div>
+            <span class="red-arrow-btn" aria-label="Open WhatsApp">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </span>
+          </a>
+
+          <a class="support-card email-card emailSupportLink" id="bookEmailSupportLink" href="mailto:i.galaxylogistics@gmail.com">
+            <div class="card-left">
+              <span class="card-icon mail-badge">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 7l9 6 9-6"/></svg>
+              </span>
+              <div class="card-info">
+                <span class="card-name">Business Email</span>
+                <span class="card-val">i.galaxylogistics@gmail.com</span>
+              </div>
+            </div>
+            <span class="red-arrow-btn" aria-label="Send Business Email">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </span>
+          </a>
+        </div>
+
+        <button class="book" id="againBtnErr" type="button" style="margin-top:4px;">Book Another Ride</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var areas = [
+    "Airport Drop-off",
+    "Airport Pick-up",
+    "Asokoro",
+    "Maitama",
+    "Central Business District (CBD)",
+    "Wuse / Wuse 2",
+    "Garki / Garki 2",
+    "Guzape",
+    "Jabi",
+    "Utako",
+    "Mabushi",
+    "Katampe / Katampe Extension",
+    "Life Camp",
+    "Gwarinpa",
+    "Kado",
+    "Dawaki",
+    "Apo / Apo Resettlement",
+    "Lokogoma",
+    "Kaura / Games Village",
+    "Galadimawa",
+    "Lugbe",
+    "Durumi",
+    "Kubwa",
+    "Bwari",
+    "Gwagwalada",
+    "Kuje",
+    "Karu / Nyanya",
+    "Mararaba",
+    "Suleja",
+    "Madalla / Zuba",
+    "Keffi",
+    "Kaduna (Interstate)",
+    "Full Day City Hire (Abuja)"
+  ];
+
+  var cars = ["Sedan", "Lexus", "Prado/Hiace", "LandCruiser/Coaster"];
+  var maxPax = { "Sedan": 4, "Lexus": 4, "Prado/Hiace": 14, "LandCruiser/Coaster": 30 };
+  var raw = {
+    "Airport Drop-off": [40, 60, 95, 160],
+    "Airport Pick-up": [45, 65, 100, 170],
+    "Asokoro": [35, 55, 85, 150],
+    "Maitama": [35, 55, 85, 150],
+    "Central Business District (CBD)": [35, 55, 85, 150],
+    "Wuse / Wuse 2": [35, 55, 85, 150],
+    "Garki / Garki 2": [35, 55, 85, 150],
+    "Guzape": [35, 55, 85, 150],
+    "Jabi": [35, 55, 85, 150],
+    "Utako": [35, 55, 85, 150],
+    "Mabushi": [35, 55, 85, 150],
+    "Katampe / Katampe Extension": [40, 60, 90, 160],
+    "Life Camp": [40, 60, 90, 160],
+    "Gwarinpa": [40, 60, 90, 160],
+    "Kado": [40, 60, 90, 160],
+    "Dawaki": [45, 65, 95, 165],
+    "Apo / Apo Resettlement": [40, 60, 90, 160],
+    "Lokogoma": [45, 65, 95, 165],
+    "Kaura / Games Village": [40, 60, 90, 160],
+    "Galadimawa": [45, 65, 95, 165],
+    "Lugbe": [45, 65, 95, 165],
+    "Durumi": [35, 55, 85, 150],
+    "Kubwa": [50, 70, 105, 180],
+    "Bwari": [70, 95, 140, 220],
+    "Gwagwalada": [80, 110, 160, 250],
+    "Kuje": [60, 85, 125, 200],
+    "Karu / Nyanya": [45, 65, 95, 165],
+    "Mararaba": [50, 75, 110, 180],
+    "Suleja": [80, 110, 160, 250],
+    "Madalla / Zuba": [75, 105, 150, 240],
+    "Keffi": [95, 130, 190, 290],
+    "Kaduna (Interstate)": [180, 240, 340, 520],
+    "Full Day City Hire (Abuja)": [90, 120, 170, 280]
+  };
+
+  var overlay = document.getElementById('overlay');
+  var openBtn = document.getElementById('openBtn');
+  var closeBtn = document.getElementById('closeBtn');
+  var showCarsBtn = document.getElementById('showCarsBtn');
+  var bookForm = document.getElementById('bookForm');
+  var againBtn = document.getElementById('againBtn');
+  var areaSelect = document.getElementById('service_area');
+  var carSelect = document.getElementById('selected_car');
+  var paxSelect = document.getElementById('passenger_count');
+  var totalEl = document.getElementById('total');
+  var submitBtn = document.getElementById('submitBtn');
+
+  // Populate area dropdown
+  areas.forEach(function(a) {
+    var opt = document.createElement('option');
+    opt.value = a;
+    opt.textContent = a;
+    areaSelect.appendChild(opt);
+  });
+
+  function calcTotal() {
+    var carIdx = cars.indexOf(carSelect.value);
+    var amt = 0;
+    if (areaSelect.value && raw[areaSelect.value] && carIdx !== -1) {
+      amt = (raw[areaSelect.value][carIdx] || 0) * 1000;
+    }
+    totalEl.textContent = '₦' + amt.toLocaleString();
+  }
+
+  function updatePassengers() {
+    var max = maxPax[carSelect.value] || 4;
+    var cur = paxSelect.value;
+    paxSelect.innerHTML = '<option value="" disabled selected>Passengers</option>';
+    for (var i = 1; i <= max; i++) {
+      var opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = i + (i === 1 ? ' Passenger' : ' Passengers');
+      if (String(i) === cur) opt.selected = true;
+      paxSelect.appendChild(opt);
+    }
+  }
+
+  function openModal() { overlay.classList.add('open'); }
+  function closeModal() { overlay.classList.remove('open'); }
+
+  openBtn.addEventListener('click', openModal);
+  closeBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) closeModal(); });
+  showCarsBtn.addEventListener('click', function() {
+    closeModal();
+    if (window.opener || window.parent !== window) {
+      window.location.href = '/#vehicles';
+    }
+  });
+
+  carSelect.addEventListener('change', function() {
+    updatePassengers();
+    calcTotal();
+  });
+  areaSelect.addEventListener('change', calcTotal);
+
+  bookForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Processing...';
+
+    var now = new Date();
+    var dd = String(now.getDate()).padStart(2, '0');
+    var mm = String(now.getMonth() + 1).padStart(2, '0');
+    var rand4 = Math.floor(1000 + Math.random() * 9000);
+    var bId = 'GL-' + dd + mm + '-' + rand4;
+
+    var payload = {
+      booking_id: bId,
+      pickup_location: document.getElementById('pickup_location').value,
+      service_area: document.getElementById('service_area').value,
+      exact_destination_address: document.getElementById('exact_destination_address').value,
+      pickup_date: document.getElementById('pickup_date').value,
+      pickup_time: document.getElementById('pickup_time').value,
+      return_date: document.getElementById('return_date').value,
+      return_time: document.getElementById('return_time').value,
+      selected_car: document.getElementById('selected_car').value,
+      passenger_count: document.getElementById('passenger_count').value,
+      client_type: document.getElementById('client_type').value,
+      full_name: document.getElementById('full_name').value,
+      phone_number: document.getElementById('phone_number').value,
+      email_address: document.getElementById('email_address').value,
+      estimated_total: totalEl.textContent,
+      timestamp: now.toISOString()
+    };
+
+    function updateSupportLinks(d) {
+      var summary = 'Hello Top Galaxy, I would like to book a ride.' +
+        '\n\nName: ' + (d.full_name || 'N/A') +
+        '\nPhone: ' + (d.phone_number || 'N/A') +
+        '\nEmail: ' + (d.email_address || 'N/A') +
+        '\nVehicle: ' + (d.selected_car || 'N/A') +
+        '\nPassengers: ' + (d.passenger_count || '1') +
+        '\nService Area: ' + (d.service_area || 'N/A') +
+        (d.exact_destination_address ? ('\nExact Address: ' + d.exact_destination_address) : '') +
+        '\nPickup: ' + (d.pickup_date || '') + ' ' + (d.pickup_time || '') +
+        '\nReturn: ' + (d.return_date || '') + ' ' + (d.return_time || '') +
+        '\nEstimated Total: ' + (d.estimated_total || '₦0');
+
+      var waUrl = 'https://wa.me/2347016545203?text=' + encodeURIComponent(summary);
+      var mailUrl = 'mailto:i.galaxylogistics@gmail.com?subject=' + encodeURIComponent('Booking Request - ' + (d.full_name || 'Customer')) + '&body=' + encodeURIComponent(summary);
+
+      document.querySelectorAll('.waSupportLink, #bookWaSupportLink').forEach(function(el) { el.href = waUrl; });
+      document.querySelectorAll('.emailSupportLink, #bookEmailSupportLink').forEach(function(el) { el.href = mailUrl; });
+    }
+
+    function showSuccess() {
+      var sOk = document.getElementById('sucSuccessState'), fOk = document.getElementById('sucFailureState');
+      if (sOk) sOk.style.display = 'block';
+      if (fOk) fOk.style.display = 'none';
+      bookForm.reset();
+      bookForm.style.display = 'none';
+      document.getElementById('success').classList.add('show-s');
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<svg class="icon"><use href="#icon-cal-clock"/></svg>Book Now';
+    }
+
+    function showFailure() {
+      updateSupportLinks(payload);
+      var sOk = document.getElementById('sucSuccessState'), fOk = document.getElementById('sucFailureState');
+      if (sOk) sOk.style.display = 'none';
+      if (fOk) fOk.style.display = 'block';
+      bookForm.style.display = 'none';
+      document.getElementById('success').classList.add('show-s');
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<svg class="icon"><use href="#icon-cal-clock"/></svg>Book Now';
+    }
+
+    (async function deliver() {
+      var delivered = false;
+
+      // 1. Try server proxy endpoint first
+      try {
+        var sRes = await fetch('/api/booking-webhook', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (sRes.ok) {
+          var sData = await sRes.json();
+          if (sData && sData.success === true) {
+            delivered = true;
+          }
+        }
+      } catch (err) {
+        console.warn('Server proxy unavailable, testing direct fetch:', err);
+      }
+
+      // 2. Direct browser fetch fallback
+      if (!delivered) {
+        var wProd = (window.__BOOKING_WEBHOOK_URL__ || 'https://foamy-foxhound.pikapod.net/webhook/galaxy-booking').trim();
+        var wTest = (window.__BOOKING_WEBHOOK_TEST_URL__ || 'https://foamy-foxhound.pikapod.net/webhook-test/galaxy-booking').trim();
+        var targets = [wProd];
+        if (wTest && wTest !== wProd) targets.push(wTest);
+
+        for (var i = 0; i < targets.length; i++) {
+          try {
+            var r = await fetch(targets[i], {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+            if (r.ok) {
+              delivered = true;
+              break;
+            }
+          } catch (e) {
+            // Network error or 404 CORS block
+          }
+        }
+      }
+
+      if (delivered) {
+        showSuccess();
+      } else {
+        showFailure();
+      }
+    })();
+  });
+
+  function resetFormView() {
+    bookForm.reset();
+    bookForm.style.display = 'block';
+    document.getElementById('success').classList.remove('show-s');
+    var sOk = document.getElementById('sucSuccessState'), fOk = document.getElementById('sucFailureState');
+    if (sOk) sOk.style.display = 'block';
+    if (fOk) fOk.style.display = 'none';
+    totalEl.textContent = '₦0';
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '<svg class="icon"><use href="#icon-cal-clock"/></svg>Book Now';
+  }
+
+  if (againBtn) againBtn.addEventListener('click', resetFormView);
+  var againBtnErr = document.getElementById('againBtnErr');
+  if (againBtnErr) againBtnErr.addEventListener('click', resetFormView);
+})();
+</script>
+</body>
+</html>

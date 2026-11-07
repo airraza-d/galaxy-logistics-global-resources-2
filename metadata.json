@@ -1,0 +1,8 @@
+{
+  "name": "Top Galaxy Logistics Global Resources LTD",
+  "description": "Luxury car rental in Nigeria with bespoke fleet, transparent pricing, and seamless booking experience.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
